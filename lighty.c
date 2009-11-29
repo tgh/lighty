@@ -14,8 +14,8 @@
  * - linux/mod_devicetable.h
  * - linux/usb/ch9.h
  * - linux/errno.h              (for -ENODEV)
- * - linux/delay.h	            (for mdelay() )
- * - linux/interrupt.h	        (for in_interrupt() )
+ * - linux/delay.h              (for mdelay() )
+ * - linux/interrupt.h          (for in_interrupt() )
  * - linux/list.h               (for struct list_head)
  * - linux/kref.h               (for struct kref)
  * - linux/device.h             (for struct device)
@@ -77,10 +77,10 @@ static struct usb_device_id lighty_table [] = {
  */
 static struct usb_driver lighty_driver = {
     .owner = THIS_MODULE,
-	.name = "lighty",
-	.id_table = lighty_table,
-	.probe = lighty_probe,
-	.disconnect = lighty_disconnect
+    .name = "lighty",
+    .id_table = lighty_table,
+    .probe = lighty_probe,
+    .disconnect = lighty_disconnect
     .ioctl = lighty_ioctl
 };
 
@@ -100,9 +100,9 @@ struct file_operations lighty_fops = {
  * used in the probe() function with a call to usb_register_dev().
  */
 static struct usb_class_driver lighty_class = {
-	.name = "usb/lighty%d",
-	.fops = &skel_fops,
-	.minor_base = USB_SKEL_MINOR_BASE
+    .name = "usb/lighty%d",
+    .fops = &skel_fops,
+    .minor_base = USB_SKEL_MINOR_BASE
 };
 
 //---------------------------------------------------------------------------
@@ -148,28 +148,25 @@ static int lighty_probe(struct usb_interface *interface,
                                                 const struct usb_device_id *id)
 {
     struct usb_lighty *dev = NULL;              //our device struct
-	struct usb_host_interface *iface_desc;      //temp pointer
-	struct usb_endpoint_descriptor *endpoint;   //temp pointer
-	size_t buffer_size;     //size of the device's buffer for bulk transfers
-	int i;
-	int retval;
+    struct usb_host_interface *iface_desc;      //temp pointer
+    struct usb_endpoint_descriptor *endpoint;   //temp pointer
+    size_t buffer_size;     //size of the device's buffer for bulk transfers
+    int i;
+    int retval;
 
-	//allocate memory for the device (struct usb_lighty)
-	dev = kmalloc(sizeof(struct usb_lighty), GFP_KERNEL);
-	if (dev == NULL)
-		return -ENOMEM;
+    //allocate memory for the device (struct usb_lighty)
+    dev = kmalloc(sizeof(struct usb_lighty), GFP_KERNEL);
+    if (dev == NULL)
+        return -ENOMEM;
     //clean the memory allocated with zeroes
-	memset(dev, 0x00, sizeof (*dev));
+    memset(dev, 0x00, sizeof (*dev));
     //initialize the reference count of this device
-	kref_init(&dev->refcount);
+    kref_init(&dev->refcount);
 
     //connect usb_device struct passed in by the core with this device struct
-	dev->udev = usb_get_dev(interface_to_usbdev(interface));
+    dev->udev = usb_get_dev(interface_to_usbdev(interface));
     //connect the interface passed in by the usb core to this device struct
-	dev->interface = interface;
-
-	/* set up the endpoint information */
-	/* use only the first bulk-in and bulk-out endpoints */
+    dev->interface = interface;
 
     /*
      * traverse the array of endpoints that the currently active interface
@@ -180,15 +177,15 @@ static int lighty_probe(struct usb_interface *interface,
      * usb_host_endpoint ('endpoint').
      */
     //use temporary pointer to get device's current interface setting
-	iface_desc = interface->cur_altsetting;
+    iface_desc = interface->cur_altsetting;
     //traverse the endpoint array
-	for (i = 0; i < iface_desc->desc.bNumEndpoints; ++i) {
+    for (i = 0; i < iface_desc->desc.bNumEndpoints; ++i) {
         /*
          * use temporary usb_endpoint_descriptor to point to current endpoint.
          * (a usb_host_endpoint struct contains a usb_endpoint_descriptor struct
          * ('desc'). 
          */
-		endpoint = &iface_desc->endpoint[i].desc;
+        endpoint = &iface_desc->endpoint[i].desc;
 
         /*
          * check for 3 things for each endpoint we're looking for:
@@ -198,63 +195,63 @@ static int lighty_probe(struct usb_interface *interface,
          * If all are true, the appropriate endpoint has been found.
          */
         //check for bulk IN endpoint
-		if (!dev->bulk_in_endpointAddr &&
-		    (endpoint->bEndpointAddress & USB_DIR_IN) &&
-		    ((endpoint->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK)
-					== USB_ENDPOINT_XFER_BULK)) {
+        if (!dev->bulk_in_endpointAddr &&
+            (endpoint->bEndpointAddress & USB_DIR_IN) &&
+            ((endpoint->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK)
+                == USB_ENDPOINT_XFER_BULK)) {
             //grab the size of the device's buffer for bulk transfer
-			buffer_size = endpoint->wMaxPacketSize;
+            buffer_size = endpoint->wMaxPacketSize;
             //set that size in our device struct
-			dev->bulk_in_size = buffer_size;
+            dev->bulk_in_size = buffer_size;
             //set the address of the endpoint in our device struct
-			dev->bulk_in_endpointAddr = endpoint->bEndpointAddress;
+            dev->bulk_in_endpointAddr = endpoint->bEndpointAddress;
             //allocate space of buffer size for our device struct bulk IN buffer
-			dev->bulk_in_buffer = kmalloc(buffer_size, GFP_KERNEL);
+            dev->bulk_in_buffer = kmalloc(buffer_size, GFP_KERNEL);
             //check for kmalloc error
-			if (!dev->bulk_in_buffer) {
-				err("Could not allocate bulk_in_buffer");
+            if (!dev->bulk_in_buffer) {
+                err("Could not allocate bulk_in_buffer");
                 //decrement our device struct reference count
-				kref_put(&dev->refcount, skel_delete);
+                kref_put(&dev->refcount, skel_delete);
                 return -ENOMEM;
-			}
-		}
+            }
+        }
         //check for bulk OUT endpoint
-		if (!dev->bulk_out_endpointAddr &&
-		    !(endpoint->bEndpointAddress & USB_DIR_IN) &&
-		    ((endpoint->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK)
-					== USB_ENDPOINT_XFER_BULK)) {
+        if (!dev->bulk_out_endpointAddr &&
+            !(endpoint->bEndpointAddress & USB_DIR_IN) &&
+            ((endpoint->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK)
+                == USB_ENDPOINT_XFER_BULK)) {
 			//set the address of the endpoint in our device struct
-			dev->bulk_out_endpointAddr = endpoint->bEndpointAddress;
-		}
-	}
-	if (!(dev->bulk_in_endpointAddr && dev->bulk_out_endpointAddr)) {
-		err("Could not find both bulk-in and bulk-out endpoints");
+            dev->bulk_out_endpointAddr = endpoint->bEndpointAddress;
+        }
+    }
+    if (!(dev->bulk_in_endpointAddr && dev->bulk_out_endpointAddr)) {
+        err("Could not find both bulk-in and bulk-out endpoints");
 		//decrement our device struct reference count
         kref_put(&dev->refcount, skel_delete);
         //not sure what error value to return here...
         return -ENOMEM;
-	}
+    }
 
 	//save our data pointer in this interface device
-	usb_set_intfdata(interface, dev);
+    usb_set_intfdata(interface, dev);
 
 	//now we can register the device
-	retval = usb_register_dev(interface, &lighty_class);
+    retval = usb_register_dev(interface, &lighty_class);
     //check return value of registration
-	if (retval) {
-		err("Not able to get a minor for this device.");
+    if (retval) {
+        err("Not able to get a minor for this device.");
         //reset our data pointer
-		usb_set_intfdata(interface, NULL);
+        usb_set_intfdata(interface, NULL);
 		//decrement our device struct reference count
         kref_put(&dev->refcount, skel_delete);
         //not sure what error value to return here...
         return -ENOMEM;
-	}
+    }
 
-	//let the user know what node this device is now attached to
-	info("USB lighty device now attached to USBlighty-%d", interface->minor);
+    //let the user know what node this device is now attached to
+    info("USB lighty device now attached to USBlighty-%d", interface->minor);
     //return success
-	return 0;
+    return 0;
 }
 
 //---------------------------------------------------------------------------

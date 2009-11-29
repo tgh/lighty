@@ -212,7 +212,7 @@ static int lighty_probe(struct usb_interface *interface,
             if (!dev->bulk_in_buffer) {
                 err("Could not allocate bulk_in_buffer");
                 //decrement our device struct reference count
-                kref_put(&dev->refcount, skel_delete);
+                kref_put(&dev->refcount, lighty_delete);
                 return -ENOMEM;
             }
         }
@@ -228,7 +228,7 @@ static int lighty_probe(struct usb_interface *interface,
     if (!(dev->bulk_in_endpointAddr && dev->bulk_out_endpointAddr)) {
         err("Could not find both bulk-in and bulk-out endpoints");
 		//decrement our device struct reference count
-        kref_put(&dev->refcount, skel_delete);
+        kref_put(&dev->refcount, lighty_delete);
         //not sure what error value to return here...
         return -ENOMEM;
     }
@@ -244,7 +244,7 @@ static int lighty_probe(struct usb_interface *interface,
         //reset our data pointer
         usb_set_intfdata(interface, NULL);
 		//decrement our device struct reference count
-        kref_put(&dev->refcount, skel_delete);
+        kref_put(&dev->refcount, lighty_delete);
         //not sure what error value to return here...
         return -ENOMEM;
     }
@@ -328,7 +328,28 @@ int lighty_ioctl(struct usb_interface *intf, unsigned int code, void *buf)
 
 void lighty_disconnect(struct usb_interface *intf)
 {
+    struct usb_lighty *dev;
+    int minor = interface->minor;
 
+    //acquire the big kernel lock to prevent open() from racing disconnect()
+    lock_kernel();
+
+    //get our data structure that was saved in the device interface in probe()
+    dev = usb_get_intfdata(interface);
+    //now set it to NULL
+    usb_set_intfdata(interface, NULL);
+
+    //unregister the device to give back the minor number to the usb core
+    usb_deregister_dev(interface, &lighty_class);
+
+    //release the kernel lock
+    unlock_kernel();
+
+    //decrement our reference counter
+    kref_put(&dev->kref, lighty_delete);
+
+    //output disconnect message
+    info("USB lighty #%d now disconnected", minor);
 }
 
 //---------------------------------------------------------------------------

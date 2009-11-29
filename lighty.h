@@ -13,7 +13,11 @@
  * USB has a reserved major number of 180, so we do not need to set up our own
  * major number, or have one setup dynamically like a char device would require.
  * Instead we just have a base number for minor numbers, which here is
- * arbitrary.
+ * arbitrary.  This is used in the usb_class_driver struct, which is used when
+ * registering the device with a call to usb_register_dev() in the probe()
+ * function.
+ * All devices associated with this driver are created with unique, increasing
+ * minor numbers beginning with this value.
  */
 #define LIGHTY_MINOR_BASE 100
 

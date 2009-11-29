@@ -98,11 +98,12 @@ struct file_operations lighty_fops = {
  * usb class driver info in order to get a minor number from the usb core,
  * and to have the device registered with devfs and the driver core.  This is
  * used in the probe() function with a call to usb_register_dev().
+ * 'name' is the name that sysfs uses to describe the device.
  */
 static struct usb_class_driver lighty_class = {
     .name = "usb/lighty%d",
-    .fops = &skel_fops,
-    .minor_base = USB_SKEL_MINOR_BASE
+    .fops = &lighty_fops,
+    .minor_base = LIGHTY_MINOR_BASE
 };
 
 //---------------------------------------------------------------------------
@@ -232,7 +233,7 @@ static int lighty_probe(struct usb_interface *interface,
         return -ENOMEM;
     }
 
-	//save our data pointer in this interface device
+	//save our data pointer in this device interface for later use
     usb_set_intfdata(interface, dev);
 
 	//now we can register the device
@@ -257,13 +258,41 @@ static int lighty_probe(struct usb_interface *interface,
 //---------------------------------------------------------------------------
 
 /*
- * OPEN - this funciton is called when the device is opened in userspace (when
- * the "file" /dev/lighty0 or /dev/lighty1 is opened, for example)
+ * OPEN
  */
 
 int lighty_open(struct inode *inode, struct file *filp)
 {
+    struct usb_lighty *dev;
+    struct usb_interface *interface;
+    int subminor;
+    int retval = 0;
 
+    //get the minor number from the inode
+    subminor = iminor(inode);
+
+    //use the minor number to get the assocaited interface
+    interface = usb_find_interface(&lighty_driver, subminor);
+    //make sure interface was found
+    if (!interface) {
+        err ("%s - error, can't find device for minor %d",  __FUNCTION__,
+                                                                    subminor);
+        return -ENODEV;
+    }
+
+    //get our data structure that was saved in the device interface in probe()
+    dev = usb_get_intfdata(interface);
+    if (!dev)
+        return -ENODEV;
+	
+    //increment our device reference counter
+    kref_get(&dev->kref);
+
+    //save our device struct (pointer) in the file's private data structure
+    filp->private_data = dev;
+
+    //return success
+    return 0;
 }
 
 //---------------------------------------------------------------------------

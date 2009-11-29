@@ -51,6 +51,8 @@ XXX
 //Vendor and product ID's for the device
 #define USB_LIGHTY_VENDOR_ID	0xfff0
 #define USB_LIGHTY_PRODUCT_ID	0xfff0
+//macro to get the lighty_device struct given a kref object
+#define to_skel_dev(d) container_of(d, struct usb_skel, kref)
 
 //----------------------------------------------------------------------------
 

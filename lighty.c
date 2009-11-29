@@ -355,6 +355,27 @@ void lighty_disconnect(struct usb_interface *intf)
 //---------------------------------------------------------------------------
 
 /*
+ * DELETE
+ */
+static void lighty_delete(struct kref *kref)
+{
+    //get the lighty_device struct that the kref object refers to
+    struct usb_lighty *dev = to_lighty_dev(kref);
+
+    if (dev) {
+        //release a use of the usb device structure
+        usb_put_dev(dev->udev);
+        //free the memory allocated for the bulk in transfer buffer
+        if (dev->bulk_in_buffer)
+            kfree (dev->bulk_in_buffer);
+        //free the device structure
+        kfree (dev);
+    }
+}
+
+//---------------------------------------------------------------------------
+
+/*
  * RELEASE
  */
 int lighty_release(struct inode *inode, struct file *filp)

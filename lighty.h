@@ -10,14 +10,12 @@
 /*
  * MAJOR/MINOR NUMBERS
  *
- * device major number (0 means it will be dynamically allocated by kernel
- * in the init function).  A zero for the minor number is common practice,
- * but not required.  It is the starting number for devices associated with
- * the driver when allowing multiple devices to use the driver concurrently,
- * i.e. lighty0, lighty1, lighty2, etc.
+ * USB has a reserved major number of 180, so we do not need to set up our own
+ * major number, or have one setup dynamically like a char device would require.
+ * Instead we just have a base number for minor numbers, which here is
+ * arbitrary.
  */
-#define LIGHTY_MAJOR 0
-#define LIGHTY_MINOR 0
+#define LIGHTY_MINOR_BASE 100
 
 //----------------------------------------------------------------------------
 
@@ -38,7 +36,7 @@ XXX
  * Each command is given a sequential number (using the _IO, IOR, _IOW, or _IOWR
  * macros) starting with 0.
  */
-#define SSTORE_IOCTL_MAX XXX
+#define LIGHTY_IOCTL_MAX XXX
 
 //----------------------------------------------------------------------------
 
@@ -46,8 +44,9 @@ XXX
  * MISC. DEFINITIONS
  */
 
-//the number of devices that can be associated with this driver
-const int LIGHTY_DEVICE_COUNT = 1;
+//Vendor and product ID's for the device
+#define USB_LIGHTY_VENDOR_ID	0xfff0
+#define USB_LIGHTY_PRODUCT_ID	0xfff0
 
 //----------------------------------------------------------------------------
 
@@ -56,20 +55,12 @@ const int LIGHTY_DEVICE_COUNT = 1;
  */
 
 //the device structure
-struct lighty {
-    /*
-     * fd_count keeps track of how many open file descriptors in user space are
-     * associated with the device represented by an instance of this struct.
-     * This is done so that the release function in the driver can shut down
-     * the device on the last close. (See "Linux Device Drivers" 3rd Ed. pg. 59)
-     */
-    unsigned int fd_count;
-    /*
-     * this is the head of the wait queue. wait_queue_head_t is a typedef for
-     * struct __wait_queue_head (see linux/wait.h).  This queue is used in the
-     * read() function of sstore.c.
-     */
-    wait_queue_head_t wait_queue;
-    struct semaphore mutex;     //semaphore for mutal exclusion
-    struct cdev cdev;
+struct usb_lighty {
+	struct usb_device * udev;         /* the usb device for this device */
+	struct usb_interface * interface; /* the interface for this device */
+	unsigned char * bulk_in_buffer;   /* the buffer to receive data */
+	size_t bulk_in_size;              /* the size of the receive buffer */
+	__u8 bulk_in_endpointAddr;        /* the address of the bulk in endpoint */
+	__u8 bulk_out_endpointAddr;       /* the address of the bulk out endpoint */
+	struct kref refcount;             /* a reference count for this struct */
 };

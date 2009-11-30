@@ -28,7 +28,7 @@
  * among other things.  linux/mod_devicetable.h defines struct usb_device_id.
  */
 #include <linux/usb.h>
-#include "lighty.h"             /* for struct lighty, vendor and product id's */
+#include "lighty.h"             /* struct lighty, vendor/product id's, etc. */
 
 //---------------------------------------------------------------------------
 
@@ -41,8 +41,10 @@ static int lighty_probe(struct usb_interface *interface,
 int lighty_open(struct inode *inode, struct file *filp);
 int lighty_proc_XXX(char *page, char **start, off_t offset, int count,
                                                         int *eof, void *data);
-int lighty_ioctl(struct usb_interface *intf, unsigned int code, void *buf);
+int lighty_ioctl(struct inode *i_node, struct file *file, unsigned int ui,
+                                                            unsigned long ul);
 void lighty_disconnect(struct usb_interface *intf);
+static void lighty_delete(struct kref *kref);
 int lighty_release(struct inode *inode, struct file *filp);
 static void __exit lighty_cleanup_and_exit(void);
 
@@ -76,12 +78,10 @@ static struct usb_device_id lighty_table [] = {
  * in sysfs under /sys/bus/usb/drivers/ when the driver is loaded.
  */
 static struct usb_driver lighty_driver = {
-    .owner = THIS_MODULE,
     .name = "lighty",
     .id_table = lighty_table,
     .probe = lighty_probe,
     .disconnect = lighty_disconnect
-    .ioctl = lighty_ioctl
 };
 
 /*
@@ -91,6 +91,7 @@ static struct usb_driver lighty_driver = {
 struct file_operations lighty_fops = {
     .owner = THIS_MODULE,
     .open = lighty_open,
+    .ioctl = lighty_ioctl,
     .release = lighty_release
 };
 
@@ -266,7 +267,6 @@ int lighty_open(struct inode *inode, struct file *filp)
     struct usb_lighty *dev;
     struct usb_interface *interface;
     int subminor;
-    int retval = 0;
 
     //get the minor number from the inode
     subminor = iminor(inode);
@@ -286,7 +286,7 @@ int lighty_open(struct inode *inode, struct file *filp)
         return -ENODEV;
 	
     //increment our device reference counter
-    kref_get(&dev->kref);
+    kref_get(&dev->refcount);
 
     //save our device struct (pointer) in the file's private data structure
     filp->private_data = dev;
@@ -303,7 +303,7 @@ int lighty_open(struct inode *inode, struct file *filp)
 int lighty_proc_XXX(char *page, char **start, off_t offset, int count,
         int *eof, void *data)
 {
-
+    return 0;
 }
 
 //---------------------------------------------------------------------------
@@ -311,9 +311,10 @@ int lighty_proc_XXX(char *page, char **start, off_t offset, int count,
 /*
  * IOCTL
  */
-int lighty_ioctl(struct usb_interface *intf, unsigned int code, void *buf)
+int lighty_ioctl(struct inode * i_node, struct file * file, unsigned int ui,
+                                                            unsigned long ul)
 {
-
+    return 0;
 }
 
 //---------------------------------------------------------------------------
@@ -326,7 +327,7 @@ int lighty_ioctl(struct usb_interface *intf, unsigned int code, void *buf)
  * USB Core. [taken from "Linux Device Drivers" 3rd. Ed. page 348]
  */
 
-void lighty_disconnect(struct usb_interface *intf)
+void lighty_disconnect(struct usb_interface *interface)
 {
     struct usb_lighty *dev;
     int minor = interface->minor;
@@ -346,7 +347,7 @@ void lighty_disconnect(struct usb_interface *intf)
     unlock_kernel();
 
     //decrement our reference counter
-    kref_put(&dev->kref, lighty_delete);
+    kref_put(&dev->refcount, lighty_delete);
 
     //output disconnect message
     info("USB lighty #%d now disconnected", minor);
@@ -390,7 +391,7 @@ int lighty_release(struct inode *inode, struct file *filp)
         return -ENODEV;
 
     //decrement our device reference counter
-    kref_put(&dev->kref, lighty_delete);
+    kref_put(&dev->refcount, lighty_delete);
     //return success
     return 0;
 }
@@ -408,7 +409,7 @@ static void __exit lighty_cleanup_and_exit(void)
      * disconnected, and lighty_disconnect() is called for them.
      * ["Linux Device Drivers" 3rd. Ed. page 349] 
      */
-    usb_deregister(%lighty_driver);
+    usb_deregister(&lighty_driver);
 }
 
 //---------------------------------------------------------------------------

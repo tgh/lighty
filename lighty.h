@@ -33,7 +33,7 @@
  * number.txt for magic numbers)
  */
 #define LIGHTY_IOCTL_MAGIC 0xFF
-XXX
+//XXX
 /*
  * this max value is used in driver's ioctl() to test that user's command number
  * passed in is valid.  The number corresponds to the largest command number.
@@ -41,18 +41,6 @@ XXX
  * macros) starting with 0.
  */
 #define LIGHTY_IOCTL_MAX XXX
-
-//----------------------------------------------------------------------------
-
-/*
- * MISC. DEFINITIONS
- */
-
-//Vendor and product ID's for the device
-#define USB_LIGHTY_VENDOR_ID	0xfff0
-#define USB_LIGHTY_PRODUCT_ID	0xfff0
-//macro to get the lighty_device struct given a kref object
-#define to_skel_dev(d) container_of(d, struct usb_skel, kref)
 
 //----------------------------------------------------------------------------
 
@@ -70,3 +58,15 @@ struct usb_lighty {
 	__u8 bulk_out_endpointAddr;       /* the address of the bulk out endpoint */
 	struct kref refcount;             /* a reference count for this struct */
 };
+
+//----------------------------------------------------------------------------
+
+/*
+ * MISC. DEFINITIONS
+ */
+
+//Vendor and product ID's for the device
+#define USB_LIGHTY_VENDOR_ID	0xfff0
+#define USB_LIGHTY_PRODUCT_ID	0xfff0
+//macro to get the lighty_device struct given a kref object
+#define to_lighty_dev(d) container_of(d, struct usb_lighty, refcount)

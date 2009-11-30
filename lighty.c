@@ -359,8 +359,10 @@ void lighty_disconnect(struct usb_interface *intf)
  */
 static void lighty_delete(struct kref *kref)
 {
+    struct usb_lighty *dev;
+
     //get the lighty_device struct that the kref object refers to
-    struct usb_lighty *dev = to_lighty_dev(kref);
+    dev = to_lighty_dev(kref);
 
     if (dev) {
         //release a use of the usb device structure
@@ -380,7 +382,17 @@ static void lighty_delete(struct kref *kref)
  */
 int lighty_release(struct inode *inode, struct file *filp)
 {
+    struct usb_lighty *dev;
 
+    //get the lighty_device struct that the file's private data points to
+    dev = (struct usb_lighty *)filp->private_data;
+    if (!dev)
+        return -ENODEV;
+
+    //decrement our device reference counter
+    kref_put(&dev->kref, lighty_delete);
+    //return success
+    return 0;
 }
 
 //---------------------------------------------------------------------------

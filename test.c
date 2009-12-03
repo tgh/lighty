@@ -32,6 +32,7 @@ int main () {
     if (lighty_device < 0)
         perror("open");
 
+    //keep outputting prompts as long as user doensn't type "q"
     while (1) {
         outputPrompt();
         //get user input
@@ -41,6 +42,8 @@ int main () {
             printf("\n***Error in fgets(). Exiting.\n\n");
             exit(-1);
         }
+        if (buffer[0] == '\n')
+            continue;
         //check for user quitting (typing 'q')
         checkQuit(buffer);
         //check syntax of input
@@ -50,6 +53,7 @@ int main () {
         }
         //get the light number
         light = buffer[0]-'0';
+
         //get the color
         switch (buffer[2]) {
             case 'r': color = RED;
@@ -76,8 +80,8 @@ int main () {
  */
 void checkQuit (char * input)
 {
-    if (strcmp(input, "q") == 0) {
-        printf("\n\n");;
+    if (strcmp(input, "q\n") == 0) {
+        printf("\n");
         exit(0);
     }
 }
@@ -111,7 +115,7 @@ int checkSyntax (char * input)
 void makeIoctl (int light, int color, int lighty_device)
 {
     int ioctl_return = 0;
-    int command = (light << 4) & color;
+    int command = (light << 3) | color;
 
     switch (command) {
         case RED1: ioctl_return = ioctl(lighty_device, LIGHTY_IOCTL_1RED);

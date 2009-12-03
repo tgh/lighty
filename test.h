@@ -31,7 +31,7 @@
  */
 
 //outputs a command line prompt
-#define outputPrompt() printf("\n > ")
+#define outputPrompt() printf(" > ")
 
 /*----------------------------------------------------------------------------*/
 

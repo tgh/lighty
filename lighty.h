@@ -31,16 +31,23 @@
  * "Linux Device Drivers" 3rd Ed. pgs. 137-140 for more detail,
  * asm-generic/ioctl.h for macro definitions, and Documentation/ioctl/ioctl-
  * number.txt for magic numbers)
+ * Each of these commands turns a specific light (1 or 2) to a specific color
+ * (red, green, or blue). 
  */
 #define LIGHTY_IOCTL_MAGIC 0xFF
-//XXX
+#define LIGHTY_IOCTL_1RED _IO(LIGHTY_IOCTL_MAGIC, 0)
+#define LIGHTY_IOCTL_1GREEN _IO(LIGHTY_IOCTL_MAGIC, 1)
+#define LIGHTY_IOCTL_1BLUE _IO(LIGHTY_IOCTL_MAGIC, 2)
+#define LIGHTY_IOCTL_2RED _IO(LIGHTY_IOCTL_MAGIC, 3)
+#define LIGHTY_IOCTL_2GREEN _IO(LIGHTY_IOCTL_MAGIC, 4)
+#define LIGHTY_IOCTL_2BLUE _IO(LIGHTY_IOCTL_MAGIC, 5)
 /*
  * this max value is used in driver's ioctl() to test that user's command number
  * passed in is valid.  The number corresponds to the largest command number.
  * Each command is given a sequential number (using the _IO, IOR, _IOW, or _IOWR
  * macros) starting with 0.
  */
-#define LIGHTY_IOCTL_MAX XXX
+#define LIGHTY_IOCTL_MAX 5
 
 //----------------------------------------------------------------------------
 

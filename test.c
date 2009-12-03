@@ -7,21 +7,30 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <fcntl.h>
+#include <sys/ioctl.h>
 #include "test.h"
 
 
 //function delarations
 void checkQuit (char * input);
-int checkSyntax(char * input);
+int checkSyntax (char * input);
+void makeIoctl (int light, int color, int lighty_device);
 
 
 /*---------------------------------- MAIN ------------------------------------*/
 
 int main () {
+    int lighty_device;  //file desciptor for device
     char buffer[MAX_BUF_LENGTH+1];
     char * fgetsCatcher;
     int light = 0;
     int color = 0;
+
+    //open the device
+    lighty_device = open("/dev/lighty", O_RDWR);
+    if (lighty_device < 0)
+        perror("open");
 
     while (1) {
         outputPrompt();
@@ -51,8 +60,8 @@ int main () {
                       break;
         }
 
-        //ioctl
-
+        //make the ioctl call using the given light and color
+        makeIoctl(light, color, lighty_device);
     }
 
     //this will never execute
@@ -73,6 +82,7 @@ void checkQuit (char * input)
     }
 }
 
+
 /*
  * checkSyntax.  Checks the syntax of user's input.  Returns -1 on error.
  */
@@ -92,3 +102,44 @@ int checkSyntax (char * input)
 
     return 0;
 }
+
+
+/*
+ * makeIoctl.  Takes the given light and color and makes the appropriate ioctl
+ * call.
+ */
+void makeIoctl (int light, int color, int lighty_device)
+{
+    int ioctl_return = 0;
+    int command = (light << 4) & color;
+
+    switch (command) {
+        case RED1: ioctl_return = ioctl(lighty_device, LIGHTY_IOCTL_1RED);
+                   if (ioctl_return < 0)
+                       perror("ioctl");
+                   break;
+        case GREEN1: ioctl_return = ioctl(lighty_device, LIGHTY_IOCTL_1GREEN);
+                   if (ioctl_return < 0)
+                       perror("ioctl");
+                   break;
+        case BLUE1: ioctl_return = ioctl(lighty_device, LIGHTY_IOCTL_1BLUE);
+                   if (ioctl_return < 0)
+                       perror("ioctl");
+                   break;
+        case RED2: ioctl_return = ioctl(lighty_device, LIGHTY_IOCTL_2RED);
+                   if (ioctl_return < 0)
+                       perror("ioctl");
+                   break;
+        case GREEN2: ioctl_return = ioctl(lighty_device, LIGHTY_IOCTL_2GREEN);
+                   if (ioctl_return < 0)
+                       perror("ioctl");
+                   break;
+        case BLUE2: ioctl_return = ioctl(lighty_device, LIGHTY_IOCTL_2BLUE);
+                   if (ioctl_return < 0)
+                       perror("ioctl");
+                   break;
+    }
+}
+
+
+/*-------------------------------- EOF ---------------------------------------*/

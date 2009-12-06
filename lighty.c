@@ -251,7 +251,7 @@ static int lighty_probe(struct usb_interface *interface,
     }
 
     //let the user know what node this device is now attached to
-    info("USB lighty device now attached to USBlighty-%d", interface->minor);
+    printk(KERN_NOTICE "USB lighty device now attached to USBlighty-%d", interface->minor);
     //return success
     return 0;
 }
@@ -350,7 +350,7 @@ void lighty_disconnect(struct usb_interface *interface)
     kref_put(&dev->refcount, lighty_delete);
 
     //output disconnect message
-    info("USB lighty #%d now disconnected", minor);
+    printk(KERN_NOTICE "USB lighty #%d now disconnected", minor);
 }
 
 //---------------------------------------------------------------------------

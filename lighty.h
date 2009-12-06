@@ -59,10 +59,10 @@
 struct usb_lighty {
 	struct usb_device * udev;         /* the usb device for this device */
 	struct usb_interface * interface; /* the interface for this device */
-	unsigned char * bulk_in_buffer;   /* the buffer to receive data */
-	size_t bulk_in_size;              /* the size of the receive buffer */
-	__u8 bulk_in_endpointAddr;        /* the address of the bulk in endpoint */
-	__u8 bulk_out_endpointAddr;       /* the address of the bulk out endpoint */
+	unsigned char * intr_in_buffer;   /* the buffer to receive data */
+	size_t intr_in_size;              /* the size of the receive buffer */
+	__u8 intr_in_endpointAddr;        /* the address of the intr in endpoint */
+	__u8 intr_out_endpointAddr;       /* the address of the intr out endpoint */
 	struct kref refcount;             /* a reference count for this struct */
 };
 
@@ -72,8 +72,9 @@ struct usb_lighty {
  * MISC. DEFINITIONS
  */
 
+//16c0:0482
 //Vendor and product ID's for the device
-#define USB_LIGHTY_VENDOR_ID	0xfff0
-#define USB_LIGHTY_PRODUCT_ID	0xfff0
+#define USB_LIGHTY_VENDOR_ID	0x16c0
+#define USB_LIGHTY_PRODUCT_ID	0x0482
 //macro to get the lighty_device struct given a kref object
 #define to_lighty_dev(d) container_of(d, struct usb_lighty, refcount)

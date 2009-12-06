@@ -152,7 +152,7 @@ static int lighty_probe(struct usb_interface *interface,
     struct usb_lighty *dev = NULL;              //our device struct
     struct usb_host_interface *iface_desc;      //temp pointer
     struct usb_endpoint_descriptor *endpoint;   //temp pointer
-    size_t buffer_size;     //size of the device's buffer for bulk transfers
+    size_t buffer_size;     			// the device's buffer for interrupt transfers
     int i;
     int retval;
 
@@ -197,37 +197,37 @@ static int lighty_probe(struct usb_interface *interface,
          * If all are true, the appropriate endpoint has been found.
          */
         //check for bulk IN endpoint
-        if (!dev->bulk_in_endpointAddr &&
+        if (!dev->intr_in_endpointAddr &&
             (endpoint->bEndpointAddress & USB_DIR_IN) &&
             ((endpoint->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK)
-                == USB_ENDPOINT_XFER_BULK)) {
-            //grab the size of the device's buffer for bulk transfer
+                == USB_ENDPOINT_XFER_INT)) {
+            //grab the size of the device's buffer for interrupt transfer
             buffer_size = endpoint->wMaxPacketSize;
             //set that size in our device struct
-            dev->bulk_in_size = buffer_size;
+            dev->intr_in_size = buffer_size;
             //set the address of the endpoint in our device struct
-            dev->bulk_in_endpointAddr = endpoint->bEndpointAddress;
-            //allocate space of buffer size for our device struct bulk IN buffer
-            dev->bulk_in_buffer = kmalloc(buffer_size, GFP_KERNEL);
+            dev->intr_in_endpointAddr = endpoint->bEndpointAddress;
+            //allocate space of buffer size for our device struct intr IN buffer
+            dev->intr_in_buffer = kmalloc(buffer_size, GFP_KERNEL);
             //check for kmalloc error
-            if (!dev->bulk_in_buffer) {
-                err("Could not allocate bulk_in_buffer");
+            if (!dev->intr_in_buffer) {
+                err("Could not allocate intr_in_buffer");
                 //decrement our device struct reference count
                 kref_put(&dev->refcount, lighty_delete);
                 return -ENOMEM;
             }
         }
-        //check for bulk OUT endpoint
-        if (!dev->bulk_out_endpointAddr &&
+        //check for intr OUT endpoint
+        if (!dev->intr_out_endpointAddr &&
             !(endpoint->bEndpointAddress & USB_DIR_IN) &&
             ((endpoint->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK)
-                == USB_ENDPOINT_XFER_BULK)) {
+                == USB_ENDPOINT_XFER_INT)) {
 			//set the address of the endpoint in our device struct
-            dev->bulk_out_endpointAddr = endpoint->bEndpointAddress;
+            dev->intr_out_endpointAddr = endpoint->bEndpointAddress;
         }
     }
-    if (!(dev->bulk_in_endpointAddr && dev->bulk_out_endpointAddr)) {
-        err("Could not find both bulk-in and bulk-out endpoints");
+    if (!(dev->intr_in_endpointAddr && dev->intr_out_endpointAddr)) {
+        err("Could not find both intr-in and intr-out endpoints");
 		//decrement our device struct reference count
         kref_put(&dev->refcount, lighty_delete);
         //not sure what error value to return here...
@@ -368,9 +368,9 @@ static void lighty_delete(struct kref *kref)
     if (dev) {
         //release a use of the usb device structure
         usb_put_dev(dev->udev);
-        //free the memory allocated for the bulk in transfer buffer
-        if (dev->bulk_in_buffer)
-            kfree (dev->bulk_in_buffer);
+        //free the memory allocated for the intr in transfer buffer
+        if (dev->intr_in_buffer)
+            kfree (dev->intr_in_buffer);
         //free the device structure
         kfree (dev);
     }

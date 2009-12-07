@@ -344,13 +344,13 @@ int lighty_ioctl(struct inode * i_node, struct file * file, unsigned int cmd,
         if (_IOC_TYPE(cmd) != LIGHTY_IOCTL_MAGIC)
         {
                 printk(KERN_NOTICE
-                        "sstore_ioctl: !SSTORE_IOC_MAGIC\n");
+                        "lighty_ioctl: !lighty_IOC_MAGIC\n");
                 return -ENOTTY;
         }
         if (_IOC_NR(cmd) > LIGHTY_IOCTL_MAX)
         {
                 printk(KERN_NOTICE
-                        "sstore_ioctl:  > SSTORE_IOC_MAXNR\n");
+                        "lighty_ioctl:  > lighty_IOC_MAXNR\n");
                 return -ENOTTY;
         }
 
@@ -373,7 +373,7 @@ int lighty_ioctl(struct inode * i_node, struct file * file, unsigned int cmd,
         if (err)
         {
                 printk(KERN_NOTICE
-                        "sstore_ioctl: access !ok\n");
+                        "lighty_ioctl: access !ok\n");
                 return -EFAULT;
         }
 
@@ -391,12 +391,6 @@ int lighty_ioctl(struct inode * i_node, struct file * file, unsigned int cmd,
 				printk (KERN_NOTICE "buf failed\n");
 				return -ENOMEM;
 			}
-#if 0
-			if (copy_from_user(buf, &arg, 1)) {
-				printk(KERN_NOTICE " copy_from failed\n");
-				return -EFAULT;
-			}
-#endif
 			buf[0] = 'a';
 			usb_fill_int_urb(usb_led, dev->udev, usb_sndintpipe(dev->udev, dev->intr_out_endpointAddr), buf,
 						64, (usb_complete_t)lighty_write_intr_callback, dev, 250);

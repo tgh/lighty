@@ -1,0 +1,544 @@
+   1               		.file	"example.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.global __do_copy_data
+   8               		.global __do_clear_bss
+  16               	.Ltext0:
+  17               		.section	.text.__vector_23,"ax",@progbits
+  18               	.global	__vector_23
+  20               	__vector_23:
+  21               	.LFB5:
+  22               	.LSM0:
+  23 0000 1F92      		push __zero_reg__
+  24 0002 0F92      		push r0
+  25 0004 0FB6      		in r0,__SREG__
+  26 0006 0F92      		push r0
+  27 0008 1124      		clr __zero_reg__
+  28 000a 8F93      		push r24
+  29               	/* prologue: Signal */
+  30               	/* frame size = 0 */
+  31               	.LSM1:
+  32 000c 8091 0000 		lds r24,count.1473
+  33 0010 8F5F      		subi r24,lo8(-(1))
+  34 0012 8093 0000 		sts count.1473,r24
+  35 0016 8B37      		cpi r24,lo8(123)
+  36 0018 00F0      		brlo .L3
+  37               	.LSM2:
+  38 001a 1092 0000 		sts count.1473,__zero_reg__
+  39               	.LSM3:
+  40 001e 81E0      		ldi r24,lo8(1)
+  41 0020 8093 0000 		sts do_output,r24
+  42               	.L3:
+  43               	/* epilogue start */
+  44               	.LSM4:
+  45 0024 8F91      		pop r24
+  46 0026 0F90      		pop r0
+  47 0028 0FBE      		out __SREG__,r0
+  48 002a 0F90      		pop r0
+  49 002c 1F90      		pop __zero_reg__
+  50 002e 1895      		reti
+  51               	.LFE5:
+  53               		.section	.text.main,"ax",@progbits
+  54               	.global	main
+  56               	main:
+  57               	.LFB4:
+  58               	.LSM5:
+  59 0000 CF93      		push r28
+  60 0002 DF93      		push r29
+  61               	/* prologue: function */
+  62               	/* frame size = 0 */
+  63               	.LSM6:
+  64 0004 80E8      		ldi r24,lo8(-128)
+  65 0006 8093 6100 		sts 97,r24
+  66 000a 1092 6100 		sts 97,__zero_reg__
+  67               	.LSM7:
+  68 000e 0E94 0000 		call usb_init
+  69               	.L6:
+  70               	.LSM8:
+  71 0012 0E94 0000 		call usb_configured
+  72 0016 8823      		tst r24
+  73 0018 01F0      		breq .L6
+  74 001a 80E1      		ldi r24,lo8(10000)
+  75 001c 97E2      		ldi r25,hi8(10000)
+  76               	.LVL0:
+  77               	.LBB84:
+  78               	.LBB85:
+  79               	.LBB86:
+  80               	.LBB87:
+  81               	.LSM9:
+  82 001e 20E9      		ldi r18,lo8(400)
+  83 0020 31E0      		ldi r19,hi8(400)
+  84               	.L7:
+  85 0022 F901      		movw r30,r18
+  86               	.LVL1:
+  87               	/* #APP */
+  88               	 ;  105 "/usr/lib/gcc/avr/4.4.2/../../../../avr/include/util/delay_basic.h" 1
+  89 0024 3197      		1: sbiw r30,1
+  90 0026 01F4      		brne 1b
+  91               	 ;  0 "" 2
+  92               	/* #NOAPP */
+  93               	.LBE87:
+  94               	.LBE86:
+  95               	.LSM10:
+  96 0028 0197      		sbiw r24,1
+  97               	.LSM11:
+  98 002a 01F4      		brne .L7
+  99               	.LBE85:
+ 100               	.LBE84:
+ 101               	.LSM12:
+ 102 002c 14BC      		out 68-0x20,__zero_reg__
+ 103               	.LSM13:
+ 104 002e 85E0      		ldi r24,lo8(5)
+ 105               	.LVL2:
+ 106 0030 85BD      		out 69-0x20,r24
+ 107               	.LSM14:
+ 108 0032 81E0      		ldi r24,lo8(1)
+ 109 0034 8093 6E00 		sts 110,r24
+ 110               	.LBB88:
+ 111               	.LBB89:
+ 112               	.LBB90:
+ 113               	.LBB91:
+ 114               	.LSM15:
+ 115 0038 C0E9      		ldi r28,lo8(400)
+ 116 003a D1E0      		ldi r29,hi8(400)
+ 117               	.LVL3:
+ 118               	.L46:
+ 119               	.LBE91:
+ 120               	.LBE90:
+ 121               	.LBE89:
+ 122               	.LBE88:
+ 123               	.LSM16:
+ 124 003c 80E0      		ldi r24,lo8(buffer)
+ 125 003e 90E0      		ldi r25,hi8(buffer)
+ 126 0040 60E0      		ldi r22,lo8(0)
+ 127 0042 0E94 0000 		call usb_rawhid_recv
+ 128               	.LVL4:
+ 129               	.LSM17:
+ 130 0046 1816      		cp __zero_reg__,r24
+ 131 0048 04F0      		brlt .+2
+ 132 004a 00C0      		rjmp .L8
+ 133               	.LSM18:
+ 134 004c 8091 0000 		lds r24,buffer
+ 135 0050 8336      		cpi r24,lo8(99)
+ 136 0052 01F4      		brne .+2
+ 137 0054 00C0      		rjmp .L11
+ 138 0056 8436      		cpi r24,lo8(100)
+ 139 0058 00F4      		brsh .L15
+ 140 005a 8136      		cpi r24,lo8(97)
+ 141 005c 01F0      		breq .L9
+ 142 005e 8236      		cpi r24,lo8(98)
+ 143 0060 01F0      		breq .+2
+ 144 0062 00C0      		rjmp .L8
+ 145 0064 00C0      		rjmp .L49
+ 146               	.L15:
+ 147 0066 8536      		cpi r24,lo8(101)
+ 148 0068 01F4      		brne .+2
+ 149 006a 00C0      		rjmp .L13
+ 150 006c 8536      		cpi r24,lo8(101)
+ 151 006e 00F4      		brsh .+2
+ 152 0070 00C0      		rjmp .L12
+ 153 0072 8636      		cpi r24,lo8(102)
+ 154 0074 01F0      		breq .+2
+ 155 0076 00C0      		rjmp .L8
+ 156 0078 00C0      		rjmp .L50
+ 157               	.L9:
+ 158               	.LSM19:
+ 159 007a 549A      		sbi 42-0x20,4
+ 160               	.LSM20:
+ 161 007c 5C9A      		sbi 43-0x20,4
+ 162 007e 88E8      		ldi r24,lo8(5000)
+ 163 0080 93E1      		ldi r25,hi8(5000)
+ 164               	.LVL5:
+ 165               	.L16:
+ 166               	.LBB95:
+ 167               	.LBB96:
+ 168               	.LBB97:
+ 169               	.LBB98:
+ 170               	.LSM21:
+ 171 0082 FE01      		movw r30,r28
+ 172               	.LVL6:
+ 173               	/* #APP */
+ 174               	 ;  105 "/usr/lib/gcc/avr/4.4.2/../../../../avr/include/util/delay_basic.h" 1
+ 175 0084 3197      		1: sbiw r30,1
+ 176 0086 01F4      		brne 1b
+ 177               	 ;  0 "" 2
+ 178               	/* #NOAPP */
+ 179               	.LBE98:
+ 180               	.LBE97:
+ 181               	.LSM22:
+ 182 0088 0197      		sbiw r24,1
+ 183               	.LSM23:
+ 184 008a 01F4      		brne .L16
+ 185               	.LBE96:
+ 186               	.LBE95:
+ 187               	.LSM24:
+ 188 008c 5C98      		cbi 43-0x20,4
+ 189 008e 88E8      		ldi r24,lo8(5000)
+ 190 0090 93E1      		ldi r25,hi8(5000)
+ 191               	.LVL7:
+ 192               	.L17:
+ 193               	.LBB99:
+ 194               	.LBB100:
+ 195               	.LBB101:
+ 196               	.LBB102:
+ 197               	.LSM25:
+ 198 0092 FE01      		movw r30,r28
+ 199               	.LVL8:
+ 200               	/* #APP */
+ 201               	 ;  105 "/usr/lib/gcc/avr/4.4.2/../../../../avr/include/util/delay_basic.h" 1
+ 202 0094 3197      		1: sbiw r30,1
+ 203 0096 01F4      		brne 1b
+ 204               	 ;  0 "" 2
+ 205               	/* #NOAPP */
+ 206               	.LBE102:
+ 207               	.LBE101:
+ 208               	.LSM26:
+ 209 0098 0197      		sbiw r24,1
+ 210               	.LSM27:
+ 211 009a 01F4      		brne .L17
+ 212 009c 00C0      		rjmp .L8
+ 213               	.LVL9:
+ 214               	.L49:
+ 215               	.LBE100:
+ 216               	.LBE99:
+ 217               	.LSM28:
+ 218 009e 569A      		sbi 42-0x20,6
+ 219               	.LSM29:
+ 220 00a0 5E9A      		sbi 43-0x20,6
+ 221 00a2 88E8      		ldi r24,lo8(5000)
+ 222 00a4 93E1      		ldi r25,hi8(5000)
+ 223               	.LVL10:
+ 224               	.L18:
+ 225               	.LBB103:
+ 226               	.LBB104:
+ 227               	.LBB105:
+ 228               	.LBB106:
+ 229               	.LSM30:
+ 230 00a6 FE01      		movw r30,r28
+ 231               	.LVL11:
+ 232               	/* #APP */
+ 233               	 ;  105 "/usr/lib/gcc/avr/4.4.2/../../../../avr/include/util/delay_basic.h" 1
+ 234 00a8 3197      		1: sbiw r30,1
+ 235 00aa 01F4      		brne 1b
+ 236               	 ;  0 "" 2
+ 237               	/* #NOAPP */
+ 238               	.LBE106:
+ 239               	.LBE105:
+ 240               	.LSM31:
+ 241 00ac 0197      		sbiw r24,1
+ 242               	.LSM32:
+ 243 00ae 01F4      		brne .L18
+ 244               	.LBE104:
+ 245               	.LBE103:
+ 246               	.LSM33:
+ 247 00b0 5E98      		cbi 43-0x20,6
+ 248 00b2 88E8      		ldi r24,lo8(5000)
+ 249 00b4 93E1      		ldi r25,hi8(5000)
+ 250               	.LVL12:
+ 251               	.L19:
+ 252               	.LBB107:
+ 253               	.LBB108:
+ 254               	.LBB109:
+ 255               	.LBB110:
+ 256               	.LSM34:
+ 257 00b6 FE01      		movw r30,r28
+ 258               	.LVL13:
+ 259               	/* #APP */
+ 260               	 ;  105 "/usr/lib/gcc/avr/4.4.2/../../../../avr/include/util/delay_basic.h" 1
+ 261 00b8 3197      		1: sbiw r30,1
+ 262 00ba 01F4      		brne 1b
+ 263               	 ;  0 "" 2
+ 264               	/* #NOAPP */
+ 265               	.LBE110:
+ 266               	.LBE109:
+ 267               	.LSM35:
+ 268 00bc 0197      		sbiw r24,1
+ 269               	.LSM36:
+ 270 00be 01F4      		brne .L19
+ 271 00c0 00C0      		rjmp .L8
+ 272               	.LVL14:
+ 273               	.L11:
+ 274               	.LBE108:
+ 275               	.LBE107:
+ 276               	.LSM37:
+ 277 00c2 579A      		sbi 42-0x20,7
+ 278               	.LSM38:
+ 279 00c4 5F9A      		sbi 43-0x20,7
+ 280 00c6 88E8      		ldi r24,lo8(5000)
+ 281 00c8 93E1      		ldi r25,hi8(5000)
+ 282               	.LVL15:
+ 283               	.L20:
+ 284               	.LBB111:
+ 285               	.LBB94:
+ 286               	.LBB93:
+ 287               	.LBB92:
+ 288               	.LSM39:
+ 289 00ca FE01      		movw r30,r28
+ 290               	.LVL16:
+ 291               	/* #APP */
+ 292               	 ;  105 "/usr/lib/gcc/avr/4.4.2/../../../../avr/include/util/delay_basic.h" 1
+ 293 00cc 3197      		1: sbiw r30,1
+ 294 00ce 01F4      		brne 1b
+ 295               	 ;  0 "" 2
+ 296               	/* #NOAPP */
+ 297               	.LBE92:
+ 298               	.LBE93:
+ 299               	.LSM40:
+ 300 00d0 0197      		sbiw r24,1
+ 301               	.LSM41:
+ 302 00d2 01F4      		brne .L20
+ 303               	.LBE94:
+ 304               	.LBE111:
+ 305               	.LSM42:
+ 306 00d4 5F98      		cbi 43-0x20,7
+ 307 00d6 88E8      		ldi r24,lo8(5000)
+ 308 00d8 93E1      		ldi r25,hi8(5000)
+ 309               	.LVL17:
+ 310               	.L21:
+ 311               	.LBB112:
+ 312               	.LBB113:
+ 313               	.LBB114:
+ 314               	.LBB115:
+ 315               	.LSM43:
+ 316 00da FE01      		movw r30,r28
+ 317               	.LVL18:
+ 318               	/* #APP */
+ 319               	 ;  105 "/usr/lib/gcc/avr/4.4.2/../../../../avr/include/util/delay_basic.h" 1
+ 320 00dc 3197      		1: sbiw r30,1
+ 321 00de 01F4      		brne 1b
+ 322               	 ;  0 "" 2
+ 323               	/* #NOAPP */
+ 324               	.LBE115:
+ 325               	.LBE114:
+ 326               	.LSM44:
+ 327 00e0 0197      		sbiw r24,1
+ 328               	.LSM45:
+ 329 00e2 01F4      		brne .L21
+ 330 00e4 00C0      		rjmp .L8
+ 331               	.LVL19:
+ 332               	.L12:
+ 333               	.LBE113:
+ 334               	.LBE112:
+ 335               	.LSM46:
+ 336 00e6 519A      		sbi 42-0x20,1
+ 337               	.LSM47:
+ 338 00e8 599A      		sbi 43-0x20,1
+ 339 00ea 88E8      		ldi r24,lo8(5000)
+ 340 00ec 93E1      		ldi r25,hi8(5000)
+ 341               	.LVL20:
+ 342               	.L22:
+ 343               	.LBB116:
+ 344               	.LBB117:
+ 345               	.LBB118:
+ 346               	.LBB119:
+ 347               	.LSM48:
+ 348 00ee FE01      		movw r30,r28
+ 349               	.LVL21:
+ 350               	/* #APP */
+ 351               	 ;  105 "/usr/lib/gcc/avr/4.4.2/../../../../avr/include/util/delay_basic.h" 1
+ 352 00f0 3197      		1: sbiw r30,1
+ 353 00f2 01F4      		brne 1b
+ 354               	 ;  0 "" 2
+ 355               	/* #NOAPP */
+ 356               	.LBE119:
+ 357               	.LBE118:
+ 358               	.LSM49:
+ 359 00f4 0197      		sbiw r24,1
+ 360               	.LSM50:
+ 361 00f6 01F4      		brne .L22
+ 362               	.LBE117:
+ 363               	.LBE116:
+ 364               	.LSM51:
+ 365 00f8 5998      		cbi 43-0x20,1
+ 366 00fa 88E8      		ldi r24,lo8(5000)
+ 367 00fc 93E1      		ldi r25,hi8(5000)
+ 368               	.LVL22:
+ 369               	.L23:
+ 370               	.LBB120:
+ 371               	.LBB121:
+ 372               	.LBB122:
+ 373               	.LBB123:
+ 374               	.LSM52:
+ 375 00fe FE01      		movw r30,r28
+ 376               	.LVL23:
+ 377               	/* #APP */
+ 378               	 ;  105 "/usr/lib/gcc/avr/4.4.2/../../../../avr/include/util/delay_basic.h" 1
+ 379 0100 3197      		1: sbiw r30,1
+ 380 0102 01F4      		brne 1b
+ 381               	 ;  0 "" 2
+ 382               	/* #NOAPP */
+ 383               	.LBE123:
+ 384               	.LBE122:
+ 385               	.LSM53:
+ 386 0104 0197      		sbiw r24,1
+ 387               	.LSM54:
+ 388 0106 01F4      		brne .L23
+ 389 0108 00C0      		rjmp .L8
+ 390               	.LVL24:
+ 391               	.L13:
+ 392               	.LBE121:
+ 393               	.LBE120:
+ 394               	.LSM55:
+ 395 010a 529A      		sbi 42-0x20,2
+ 396               	.LSM56:
+ 397 010c 5A9A      		sbi 43-0x20,2
+ 398 010e 88E8      		ldi r24,lo8(5000)
+ 399 0110 93E1      		ldi r25,hi8(5000)
+ 400               	.LVL25:
+ 401               	.L24:
+ 402               	.LBB124:
+ 403               	.LBB125:
+ 404               	.LBB126:
+ 405               	.LBB127:
+ 406               	.LSM57:
+ 407 0112 FE01      		movw r30,r28
+ 408               	.LVL26:
+ 409               	/* #APP */
+ 410               	 ;  105 "/usr/lib/gcc/avr/4.4.2/../../../../avr/include/util/delay_basic.h" 1
+ 411 0114 3197      		1: sbiw r30,1
+ 412 0116 01F4      		brne 1b
+ 413               	 ;  0 "" 2
+ 414               	/* #NOAPP */
+ 415               	.LBE127:
+ 416               	.LBE126:
+ 417               	.LSM58:
+ 418 0118 0197      		sbiw r24,1
+ 419               	.LSM59:
+ 420 011a 01F4      		brne .L24
+ 421               	.LBE125:
+ 422               	.LBE124:
+ 423               	.LSM60:
+ 424 011c 5A98      		cbi 43-0x20,2
+ 425 011e 88E8      		ldi r24,lo8(5000)
+ 426 0120 93E1      		ldi r25,hi8(5000)
+ 427               	.LVL27:
+ 428               	.L25:
+ 429               	.LBB128:
+ 430               	.LBB129:
+ 431               	.LBB130:
+ 432               	.LBB131:
+ 433               	.LSM61:
+ 434 0122 FE01      		movw r30,r28
+ 435               	.LVL28:
+ 436               	/* #APP */
+ 437               	 ;  105 "/usr/lib/gcc/avr/4.4.2/../../../../avr/include/util/delay_basic.h" 1
+ 438 0124 3197      		1: sbiw r30,1
+ 439 0126 01F4      		brne 1b
+ 440               	 ;  0 "" 2
+ 441               	/* #NOAPP */
+ 442               	.LBE131:
+ 443               	.LBE130:
+ 444               	.LSM62:
+ 445 0128 0197      		sbiw r24,1
+ 446               	.LSM63:
+ 447 012a 01F4      		brne .L25
+ 448 012c 00C0      		rjmp .L8
+ 449               	.LVL29:
+ 450               	.L50:
+ 451               	.LBE129:
+ 452               	.LBE128:
+ 453               	.LSM64:
+ 454 012e 539A      		sbi 42-0x20,3
+ 455               	.LSM65:
+ 456 0130 5B9A      		sbi 43-0x20,3
+ 457 0132 88E8      		ldi r24,lo8(5000)
+ 458 0134 93E1      		ldi r25,hi8(5000)
+ 459               	.LVL30:
+ 460               	.L26:
+ 461               	.LBB132:
+ 462               	.LBB133:
+ 463               	.LBB134:
+ 464               	.LBB135:
+ 465               	.LSM66:
+ 466 0136 FE01      		movw r30,r28
+ 467               	.LVL31:
+ 468               	/* #APP */
+ 469               	 ;  105 "/usr/lib/gcc/avr/4.4.2/../../../../avr/include/util/delay_basic.h" 1
+ 470 0138 3197      		1: sbiw r30,1
+ 471 013a 01F4      		brne 1b
+ 472               	 ;  0 "" 2
+ 473               	/* #NOAPP */
+ 474               	.LBE135:
+ 475               	.LBE134:
+ 476               	.LSM67:
+ 477 013c 0197      		sbiw r24,1
+ 478               	.LSM68:
+ 479 013e 01F4      		brne .L26
+ 480               	.LBE133:
+ 481               	.LBE132:
+ 482               	.LSM69:
+ 483 0140 5B98      		cbi 43-0x20,3
+ 484 0142 88E8      		ldi r24,lo8(5000)
+ 485 0144 93E1      		ldi r25,hi8(5000)
+ 486               	.LVL32:
+ 487               	.L27:
+ 488               	.LBB136:
+ 489               	.LBB137:
+ 490               	.LBB138:
+ 491               	.LBB139:
+ 492               	.LSM70:
+ 493 0146 FE01      		movw r30,r28
+ 494               	.LVL33:
+ 495               	/* #APP */
+ 496               	 ;  105 "/usr/lib/gcc/avr/4.4.2/../../../../avr/include/util/delay_basic.h" 1
+ 497 0148 3197      		1: sbiw r30,1
+ 498 014a 01F4      		brne 1b
+ 499               	 ;  0 "" 2
+ 500               	/* #NOAPP */
+ 501               	.LBE139:
+ 502               	.LBE138:
+ 503               	.LSM71:
+ 504 014c 0197      		sbiw r24,1
+ 505               	.LSM72:
+ 506 014e 01F4      		brne .L27
+ 507               	.LVL34:
+ 508               	.L8:
+ 509               	.LBE137:
+ 510               	.LBE136:
+ 511               	.LSM73:
+ 512 0150 8091 0000 		lds r24,do_output
+ 513               	.LVL35:
+ 514 0154 8823      		tst r24
+ 515 0156 01F4      		brne .+2
+ 516 0158 00C0      		rjmp .L46
+ 517               	.LSM74:
+ 518 015a 1092 0000 		sts do_output,__zero_reg__
+ 519               	.LSM75:
+ 520 015e 80E0      		ldi r24,lo8(buffer)
+ 521 0160 90E0      		ldi r25,hi8(buffer)
+ 522 0162 62E3      		ldi r22,lo8(50)
+ 523 0164 0E94 0000 		call usb_rawhid_send
+ 524               	.LVL36:
+ 525 0168 00C0      		rjmp .L46
+ 526               	.LFE4:
+ 528               	.global	do_output
+ 529               	.global	do_output
+ 530               		.section .bss
+ 533               	do_output:
+ 534 0000 00        		.skip 1,0
+ 535               		.lcomm count.1473,1
+ 536               		.comm buffer,64,1
+ 569               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 example.c
+     /tmp/ccXvb9Xk.s:2      *ABS*:000000000000003f __SREG__
+     /tmp/ccXvb9Xk.s:3      *ABS*:000000000000003e __SP_H__
+     /tmp/ccXvb9Xk.s:4      *ABS*:000000000000003d __SP_L__
+     /tmp/ccXvb9Xk.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/ccXvb9Xk.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/ccXvb9Xk.s:20     .text.__vector_23:0000000000000000 __vector_23
+                             .bss:0000000000000001 count.1473
+     /tmp/ccXvb9Xk.s:533    .bss:0000000000000000 do_output
+     /tmp/ccXvb9Xk.s:56     .text.main:0000000000000000 main
+                            *COM*:0000000000000040 buffer
+
+UNDEFINED SYMBOLS
+__do_copy_data
+__do_clear_bss
+usb_init
+usb_configured
+usb_rawhid_recv
+usb_rawhid_send

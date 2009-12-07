@@ -252,8 +252,7 @@ static int lighty_probe(struct usb_interface *interface,
     }
 
     //let the user know what node this device is now attached to
-    printk(KERN_NOTICE "USB lighty device now attached to USBlighty-%d", interface->minor);
-    //return success
+    printk(KERN_NOTICE "USB lighty device now attached to USBlighty-%d\n", interface->minor);
     return 0;
 }
 
@@ -312,12 +311,109 @@ int lighty_proc_XXX(char *page, char **start, off_t offset, int count,
 
 //---------------------------------------------------------------------------
 
+static void lighty_write_intr_callback(struct urb *urb, struct pt_regs *regs)
+{
+    /* sync/async unlink faults aren't errors */
+    if (urb->status &&
+        !(urb->status == -ENOENT ||
+          urb->status == -ECONNRESET ||
+          urb->status == -ESHUTDOWN)) {
+        dbg("%s - nonzero write bulk status received: %d",
+            __FUNCTION__, urb->status);
+    }
+    /* free up our allocated buffer */
+    usb_buffer_free(urb->dev, urb->transfer_buffer_length,
+            urb->transfer_buffer, urb->transfer_dma);
+}
+
 /*
  * IOCTL
  */
-int lighty_ioctl(struct inode * i_node, struct file * file, unsigned int ui,
-                                                            unsigned long ul)
+int lighty_ioctl(struct inode * i_node, struct file * file, unsigned int cmd,
+                                                            unsigned long arg)
 {
+	int err = 0;
+	int retval = 0;
+	struct urb *usb_led;
+	char *buf;
+	struct usb_lighty *dev = file->private_data;
+       /*
+        * extract the type and number bitfields, and don't decode
+        * wrong cmds: return ENOTTY (inappropriate ioctl) before access_ok()
+        */
+        if (_IOC_TYPE(cmd) != LIGHTY_IOCTL_MAGIC)
+        {
+                printk(KERN_NOTICE
+                        "sstore_ioctl: !SSTORE_IOC_MAGIC\n");
+                return -ENOTTY;
+        }
+        if (_IOC_NR(cmd) > LIGHTY_IOCTL_MAX)
+        {
+                printk(KERN_NOTICE
+                        "sstore_ioctl:  > SSTORE_IOC_MAXNR\n");
+                return -ENOTTY;
+        }
+
+       /*
+        * If not root/sysadmin, go away 
+        */
+        if (! capable (CAP_SYS_ADMIN))
+                return -EPERM;
+
+        /*
+         * the direction is a bitmask, and VERIFY_WRITE catches R/W
+         * transfers. `Type' is user-oriented, while
+         * access_ok is kernel-oriented, so the concept of "read" and
+         * "write" is reversed
+         */
+        if (_IOC_DIR(cmd) & _IOC_READ)
+                err = !access_ok(VERIFY_WRITE, (void __user *)arg, _IOC_SIZE(cmd));
+        else if (_IOC_DIR(cmd) & _IOC_WRITE)
+                err =  !access_ok(VERIFY_READ, (void __user *)arg, _IOC_SIZE(cmd));
+        if (err)
+        {
+                printk(KERN_NOTICE
+                        "sstore_ioctl: access !ok\n");
+                return -EFAULT;
+        }
+
+
+        switch(cmd) {
+                case LIGHTY_IOCTL_1RED:
+                        printk(KERN_NOTICE
+                                "LIGHTY_IOCTL_1RED:  Dumping data\n");
+			usb_led = usb_alloc_urb(0, GFP_KERNEL);
+			if (!usb_led) {
+				return -ENOMEM;
+			}
+			buf = usb_buffer_alloc(dev->udev, 64, GFP_KERNEL, &usb_led->transfer_dma);
+			if (!buf) {
+				printk (KERN_NOTICE "buf failed\n");
+				return -ENOMEM;
+			}
+#if 0
+			if (copy_from_user(buf, &arg, 1)) {
+				printk(KERN_NOTICE " copy_from failed\n");
+				return -EFAULT;
+			}
+#endif
+			buf[0] = 'a';
+			printk(KERN_NOTICE "Attempting to %c\n", buf[0]);
+#if 0
+void usb_fill_int_urb(struct urb *urb, struct usb_device *dev, unsigned int
+  pipe, void *transfer_buffer, int buffer_length, usb_complete_t complete,
+  void *context, int interval);
+#endif
+			usb_fill_int_urb(usb_led, dev->udev, dev->intr_out_endpointAddr,buf,
+						64, (usb_complete_t)lighty_write_intr_callback, dev, 250);
+			if( (retval = usb_submit_urb(usb_led, GFP_KERNEL)) ) {
+				err("%s - failed submitting write urb, error %d", __FUNCTION__, retval);
+				printk (KERN_NOTICE "Whoops!\n");
+			}
+
+
+                        break;
+	}
     return 0;
 }
 

@@ -404,8 +404,10 @@ void usb_fill_int_urb(struct urb *urb, struct usb_device *dev, unsigned int
   pipe, void *transfer_buffer, int buffer_length, usb_complete_t complete,
   void *context, int interval);
 #endif
-			usb_fill_int_urb(usb_led, dev->udev, dev->intr_out_endpointAddr,buf,
+			printk(KERN_NOTICE "endpoint to send to %x\n", dev->intr_out_endpointAddr);
+			usb_fill_int_urb(usb_led, dev->udev, usb_sndintpipe(dev->udev, dev->intr_out_endpointAddr), buf,
 						64, (usb_complete_t)lighty_write_intr_callback, dev, 250);
+			usb_led->transfer_flags |= URB_NO_TRANSFER_DMA_MAP;
 			if( (retval = usb_submit_urb(usb_led, GFP_KERNEL)) ) {
 				err("%s - failed submitting write urb, error %d", __FUNCTION__, retval);
 				printk (KERN_NOTICE "Whoops!\n");

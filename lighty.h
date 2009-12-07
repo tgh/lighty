@@ -75,6 +75,6 @@ struct usb_lighty {
 //16c0:0482
 //Vendor and product ID's for the device
 #define USB_LIGHTY_VENDOR_ID	0x16c0
-#define USB_LIGHTY_PRODUCT_ID	0x0482
+#define USB_LIGHTY_PRODUCT_ID	0x0fff
 //macro to get the lighty_device struct given a kref object
 #define to_lighty_dev(d) container_of(d, struct usb_lighty, refcount)

@@ -156,6 +156,7 @@ static int lighty_probe(struct usb_interface *interface,
     int i;
     int retval;
 
+    printk (KERN_NOTICE "started probe\n");
     //allocate memory for the device (struct usb_lighty)
     dev = kmalloc(sizeof(struct usb_lighty), GFP_KERNEL);
     if (dev == NULL)
@@ -211,7 +212,7 @@ static int lighty_probe(struct usb_interface *interface,
             dev->intr_in_buffer = kmalloc(buffer_size, GFP_KERNEL);
             //check for kmalloc error
             if (!dev->intr_in_buffer) {
-                err("Could not allocate intr_in_buffer");
+                printk(KERN_NOTICE "Could not allocate intr_in_buffer");
                 //decrement our device struct reference count
                 kref_put(&dev->refcount, lighty_delete);
                 return -ENOMEM;
@@ -227,7 +228,7 @@ static int lighty_probe(struct usb_interface *interface,
         }
     }
     if (!(dev->intr_in_endpointAddr && dev->intr_out_endpointAddr)) {
-        err("Could not find both intr-in and intr-out endpoints");
+        printk(KERN_NOTICE "Could not find both intr-in and intr-out endpoints");
 		//decrement our device struct reference count
         kref_put(&dev->refcount, lighty_delete);
         //not sure what error value to return here...
@@ -241,7 +242,7 @@ static int lighty_probe(struct usb_interface *interface,
     retval = usb_register_dev(interface, &lighty_class);
     //check return value of registration
     if (retval) {
-        err("Not able to get a minor for this device.");
+        printk(KERN_NOTICE "Not able to get a minor for this device.");
         //reset our data pointer
         usb_set_intfdata(interface, NULL);
 		//decrement our device struct reference count
@@ -275,15 +276,17 @@ int lighty_open(struct inode *inode, struct file *filp)
     interface = usb_find_interface(&lighty_driver, subminor);
     //make sure interface was found
     if (!interface) {
-        err ("%s - error, can't find device for minor %d",  __FUNCTION__,
+        printk (KERN_NOTICE "%s - error, can't find device for minor %d",  __FUNCTION__,
                                                                     subminor);
         return -ENODEV;
     }
 
     //get our data structure that was saved in the device interface in probe()
     dev = usb_get_intfdata(interface);
-    if (!dev)
+    if (!dev) {
+	printk (KERN_NOTICE "Could not get interface data\n");
         return -ENODEV;
+	}
 	
     //increment our device reference counter
     kref_get(&dev->refcount);
@@ -292,6 +295,7 @@ int lighty_open(struct inode *inode, struct file *filp)
     filp->private_data = dev;
 
     //return success
+    printk (KERN_NOTICE "opened");
     return 0;
 }
 

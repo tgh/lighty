@@ -31,7 +31,7 @@ int main () {
     lighty_device = open("/dev/lighty0", O_RDWR);
     if (lighty_device < 0)
         perror("open");
-
+#if 0
 	ioctl(lighty_device, LIGHTY_IOCTL_1RED);
 	sleep(1);
 	ioctl(lighty_device, LIGHTY_IOCTL_1BLUE);
@@ -44,7 +44,7 @@ int main () {
 	sleep(1);
 	ioctl(lighty_device, LIGHTY_IOCTL_2GREEN);
     //keep outputting prompts as long as user doensn't type "q"
-#if 0
+#endif
     while (1) {
         outputPrompt();
         //get user input
@@ -80,7 +80,6 @@ int main () {
         makeIoctl(light, color, lighty_device);
     }
 
-#endif
     //this will never execute
     exit(0);
 }

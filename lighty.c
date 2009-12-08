@@ -156,7 +156,6 @@ static int lighty_probe(struct usb_interface *interface,
     int i;
     int retval;
 
-    printk (KERN_NOTICE "started probe\n");
     //allocate memory for the device (struct usb_lighty)
     dev = kmalloc(sizeof(struct usb_lighty), GFP_KERNEL);
     if (dev == NULL)
@@ -294,7 +293,6 @@ int lighty_open(struct inode *inode, struct file *filp)
     filp->private_data = dev;
 
     //return success
-    printk (KERN_NOTICE "opened");
     return 0;
 }
 
@@ -335,6 +333,7 @@ int lighty_ioctl(struct inode * i_node, struct file * file, unsigned int cmd,
 	int err = 0;
 	int retval = 0;
 	struct urb *usb_led;
+	char command; // a, b, c ,d, e, f
 	char *buf;
 	struct usb_lighty *dev = file->private_data;
        /*
@@ -381,28 +380,58 @@ int lighty_ioctl(struct inode * i_node, struct file * file, unsigned int cmd,
         switch(cmd) {
                 case LIGHTY_IOCTL_1RED:
                         printk(KERN_NOTICE
-                                "LIGHTY_IOCTL_1RED:  Dumping data\n");
-			usb_led = usb_alloc_urb(0, GFP_KERNEL);
-			if (!usb_led) {
-				return -ENOMEM;
-			}
-			buf = usb_buffer_alloc(dev->udev, 64, GFP_KERNEL, &usb_led->transfer_dma);
-			if (!buf) {
-				printk (KERN_NOTICE "buf failed\n");
-				return -ENOMEM;
-			}
-			buf[0] = 'a';
-			usb_fill_int_urb(usb_led, dev->udev, usb_sndintpipe(dev->udev, dev->intr_out_endpointAddr), buf,
-						64, (usb_complete_t)lighty_write_intr_callback, dev, 250);
-			usb_led->transfer_flags |= URB_NO_TRANSFER_DMA_MAP;
-			if( (retval = usb_submit_urb(usb_led, GFP_KERNEL)) ) {
-				err("%s - failed submitting write urb, error %d", __FUNCTION__, retval);
-			}
-
-
-                        break;
+                                "LIGHTY_IOCTL_1RED\n");
+			command = 'a';
+			break;
+                case LIGHTY_IOCTL_1GREEN:
+                        printk(KERN_NOTICE
+                                "LIGHTY_IOCTL_1GREEN\n");
+			command = 'b';
+			break;
+                case LIGHTY_IOCTL_1BLUE:
+                        printk(KERN_NOTICE
+                                "LIGHTY_IOCTL_1BLUE\n");
+			command = 'c';
+			break;
+                case LIGHTY_IOCTL_2RED:
+                        printk(KERN_NOTICE
+                                "LIGHTY_IOCTL_2RED\n");
+			command = 'd';
+			break;
+                case LIGHTY_IOCTL_2GREEN:
+                        printk(KERN_NOTICE
+                                "LIGHTY_IOCTL_2GREEN\n");
+			command = 'e';
+			break;
+                case LIGHTY_IOCTL_2BLUE:
+                        printk(KERN_NOTICE
+                                "LIGHTY_IOCTL_2BLUE\n");
+			command = 'f';
+			break;
+		default:
+			printk(KERN_NOTICE
+				"Not a known command %x\n", cmd);
+			return -ENOMEM;
 	}
-    return 0;
+	usb_led = usb_alloc_urb(0, GFP_KERNEL);
+	if (!usb_led) {
+		return -ENOMEM;
+	}
+	buf = usb_buffer_alloc(dev->udev, 64, GFP_KERNEL, &usb_led->transfer_dma);
+	if (!buf) {
+		printk (KERN_NOTICE "usb_buffer_alloc failed\n");
+    		usb_buffer_free(dev->udev, usb_led->transfer_buffer_length,
+            		usb_led->transfer_buffer, usb_led->transfer_dma);
+		return -ENOMEM;
+	}
+	buf[0] = command; // a, b, c, d, e or f
+	usb_fill_int_urb(usb_led, dev->udev, usb_sndintpipe(dev->udev, dev->intr_out_endpointAddr), buf,
+				64, (usb_complete_t)lighty_write_intr_callback, dev, 250);
+	usb_led->transfer_flags |= URB_NO_TRANSFER_DMA_MAP;
+	if( (retval = usb_submit_urb(usb_led, GFP_KERNEL)) ) {
+		err("%s - failed submitting write urb, error %d", __FUNCTION__, retval);
+	}
+	return 0;
 }
 
 //---------------------------------------------------------------------------
@@ -438,7 +467,7 @@ void lighty_disconnect(struct usb_interface *interface)
     kref_put(&dev->refcount, lighty_delete);
 
     //output disconnect message
-    printk(KERN_NOTICE "USB lighty #%d now disconnected", minor);
+    printk(KERN_NOTICE "USB lighty #%d now disconnected\n", minor);
 }
 
 //---------------------------------------------------------------------------

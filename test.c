@@ -33,6 +33,16 @@ int main () {
         perror("open");
 
 	ioctl(lighty_device, LIGHTY_IOCTL_1RED);
+	sleep(1);
+	ioctl(lighty_device, LIGHTY_IOCTL_1BLUE);
+	sleep(1);
+	ioctl(lighty_device, LIGHTY_IOCTL_1GREEN);
+	sleep(1);
+	ioctl(lighty_device, LIGHTY_IOCTL_2RED);
+	sleep(1);
+	ioctl(lighty_device, LIGHTY_IOCTL_2BLUE);
+	sleep(1);
+	ioctl(lighty_device, LIGHTY_IOCTL_2GREEN);
     //keep outputting prompts as long as user doensn't type "q"
 #if 0
     while (1) {

@@ -127,14 +127,14 @@
  164               	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 analog.c
-     /tmp/ccosdNkR.s:2      *ABS*:000000000000003f __SREG__
-     /tmp/ccosdNkR.s:3      *ABS*:000000000000003e __SP_H__
-     /tmp/ccosdNkR.s:4      *ABS*:000000000000003d __SP_L__
-     /tmp/ccosdNkR.s:5      *ABS*:0000000000000000 __tmp_reg__
-     /tmp/ccosdNkR.s:6      *ABS*:0000000000000001 __zero_reg__
-     /tmp/ccosdNkR.s:20     .text.analogRead:0000000000000000 analogRead
-     /tmp/ccosdNkR.s:127    .progmem.data:0000000000000000 adc_mapping
-     /tmp/ccosdNkR.s:122    .data:0000000000000000 analog_reference_config_val
+     /tmp/ccEfHu5H.s:2      *ABS*:000000000000003f __SREG__
+     /tmp/ccEfHu5H.s:3      *ABS*:000000000000003e __SP_H__
+     /tmp/ccEfHu5H.s:4      *ABS*:000000000000003d __SP_L__
+     /tmp/ccEfHu5H.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/ccEfHu5H.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/ccEfHu5H.s:20     .text.analogRead:0000000000000000 analogRead
+     /tmp/ccEfHu5H.s:127    .progmem.data:0000000000000000 adc_mapping
+     /tmp/ccEfHu5H.s:122    .data:0000000000000000 analog_reference_config_val
 
 UNDEFINED SYMBOLS
 __do_copy_data

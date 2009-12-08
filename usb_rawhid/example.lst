@@ -524,15 +524,15 @@
  569               	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 example.c
-     /tmp/ccXvb9Xk.s:2      *ABS*:000000000000003f __SREG__
-     /tmp/ccXvb9Xk.s:3      *ABS*:000000000000003e __SP_H__
-     /tmp/ccXvb9Xk.s:4      *ABS*:000000000000003d __SP_L__
-     /tmp/ccXvb9Xk.s:5      *ABS*:0000000000000000 __tmp_reg__
-     /tmp/ccXvb9Xk.s:6      *ABS*:0000000000000001 __zero_reg__
-     /tmp/ccXvb9Xk.s:20     .text.__vector_23:0000000000000000 __vector_23
+     /tmp/ccOHiYcz.s:2      *ABS*:000000000000003f __SREG__
+     /tmp/ccOHiYcz.s:3      *ABS*:000000000000003e __SP_H__
+     /tmp/ccOHiYcz.s:4      *ABS*:000000000000003d __SP_L__
+     /tmp/ccOHiYcz.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/ccOHiYcz.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/ccOHiYcz.s:20     .text.__vector_23:0000000000000000 __vector_23
                              .bss:0000000000000001 count.1473
-     /tmp/ccXvb9Xk.s:533    .bss:0000000000000000 do_output
-     /tmp/ccXvb9Xk.s:56     .text.main:0000000000000000 main
+     /tmp/ccOHiYcz.s:533    .bss:0000000000000000 do_output
+     /tmp/ccOHiYcz.s:56     .text.main:0000000000000000 main
                             *COM*:0000000000000040 buffer
 
 UNDEFINED SYMBOLS

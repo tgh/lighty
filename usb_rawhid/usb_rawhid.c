@@ -148,7 +148,7 @@ static uint8_t PROGMEM config1_descriptor[CONFIG1_DESC_SIZE] = {
 	RAWHID_INTERFACE,			// bInterfaceNumber
 	0,					// bAlternateSetting
 	2,					// bNumEndpoints
-	0x03,					// bInterfaceClass (0x03 = HID)
+	0xFF,					// bInterfaceClass (0x03 = HID)
 	0x00,					// bInterfaceSubClass (0x01 = Boot)
 	0x00,					// bInterfaceProtocol (0x01 = Keyboard)
 	0,					// iInterface

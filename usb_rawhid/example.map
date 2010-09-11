@@ -388,11 +388,11 @@ LOAD /usr/lib/gcc/avr/4.4.2/avr5/libgcc.a
  .debug_pubnames
                 0x00000000000000be       0x41 analog.o
 
-.debug_info     0x0000000000000000      0xcd9
+.debug_info     0x0000000000000000      0xcc5
  *(.debug_info)
- .debug_info    0x0000000000000000      0x53d example.o
- .debug_info    0x000000000000053d      0x675 usb_rawhid.o
- .debug_info    0x0000000000000bb2      0x127 analog.o
+ .debug_info    0x0000000000000000      0x529 example.o
+ .debug_info    0x0000000000000529      0x675 usb_rawhid.o
+ .debug_info    0x0000000000000b9e      0x127 analog.o
  *(.gnu.linkonce.wi.*)
 
 .debug_abbrev   0x0000000000000000      0x3bc
@@ -413,14 +413,14 @@ LOAD /usr/lib/gcc/avr/4.4.2/avr5/libgcc.a
  .debug_frame   0x0000000000000030       0x70 usb_rawhid.o
  .debug_frame   0x00000000000000a0       0x20 analog.o
 
-.debug_str      0x0000000000000000      0x328
+.debug_str      0x0000000000000000      0x336
  *(.debug_str)
- .debug_str     0x0000000000000000       0xd5 example.o
-                                        0x116 (size before relaxing)
- .debug_str     0x00000000000000d5      0x217 usb_rawhid.o
-                                        0x2e1 (size before relaxing)
- .debug_str     0x00000000000002ec       0x3c analog.o
-                                         0xf1 (size before relaxing)
+ .debug_str     0x0000000000000000       0xe3 example.o
+                                        0x124 (size before relaxing)
+ .debug_str     0x00000000000000e3      0x217 usb_rawhid.o
+                                        0x2ef (size before relaxing)
+ .debug_str     0x00000000000002fa       0x3c analog.o
+                                         0xff (size before relaxing)
 
 .debug_loc      0x0000000000000000     0x11f0
  *(.debug_loc)

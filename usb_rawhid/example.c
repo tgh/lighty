@@ -36,8 +36,7 @@ uint8_t buffer[64];
 int main(void)
 {
 	int8_t r;
-	uint8_t i;
-	uint16_t val, count=0;
+	uint16_t count=0;
 
 	// set for 16 MHz clock
 	CPU_PRESCALE(0);

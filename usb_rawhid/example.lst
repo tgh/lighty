@@ -21,13 +21,13 @@
   29               	/* prologue: Signal */
   30               	/* frame size = 0 */
   31               	.LSM1:
-  32 000c 8091 0000 		lds r24,count.1473
+  32 000c 8091 0000 		lds r24,count.1471
   33 0010 8F5F      		subi r24,lo8(-(1))
-  34 0012 8093 0000 		sts count.1473,r24
+  34 0012 8093 0000 		sts count.1471,r24
   35 0016 8B37      		cpi r24,lo8(123)
   36 0018 00F0      		brlo .L3
   37               	.LSM2:
-  38 001a 1092 0000 		sts count.1473,__zero_reg__
+  38 001a 1092 0000 		sts count.1471,__zero_reg__
   39               	.LSM3:
   40 001e 81E0      		ldi r24,lo8(1)
   41 0020 8093 0000 		sts do_output,r24
@@ -519,20 +519,20 @@
  530               		.section .bss
  533               	do_output:
  534 0000 00        		.skip 1,0
- 535               		.lcomm count.1473,1
+ 535               		.lcomm count.1471,1
  536               		.comm buffer,64,1
  569               	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 example.c
-     /tmp/ccOHiYcz.s:2      *ABS*:000000000000003f __SREG__
-     /tmp/ccOHiYcz.s:3      *ABS*:000000000000003e __SP_H__
-     /tmp/ccOHiYcz.s:4      *ABS*:000000000000003d __SP_L__
-     /tmp/ccOHiYcz.s:5      *ABS*:0000000000000000 __tmp_reg__
-     /tmp/ccOHiYcz.s:6      *ABS*:0000000000000001 __zero_reg__
-     /tmp/ccOHiYcz.s:20     .text.__vector_23:0000000000000000 __vector_23
-                             .bss:0000000000000001 count.1473
-     /tmp/ccOHiYcz.s:533    .bss:0000000000000000 do_output
-     /tmp/ccOHiYcz.s:56     .text.main:0000000000000000 main
+     /tmp/ccfi2CEN.s:2      *ABS*:000000000000003f __SREG__
+     /tmp/ccfi2CEN.s:3      *ABS*:000000000000003e __SP_H__
+     /tmp/ccfi2CEN.s:4      *ABS*:000000000000003d __SP_L__
+     /tmp/ccfi2CEN.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/ccfi2CEN.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/ccfi2CEN.s:20     .text.__vector_23:0000000000000000 __vector_23
+                             .bss:0000000000000001 count.1471
+     /tmp/ccfi2CEN.s:533    .bss:0000000000000000 do_output
+     /tmp/ccfi2CEN.s:56     .text.main:0000000000000000 main
                             *COM*:0000000000000040 buffer
 
 UNDEFINED SYMBOLS

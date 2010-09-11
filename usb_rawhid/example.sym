@@ -95,7 +95,7 @@
 00800100 T __data_start
 00800100 T _edata
 00800100 B do_output
-00800101 b count.1473
+00800101 b count.1471
 00800102 b usb_configuration
 00800103 b rx_timeout_count
 00800104 b tx_timeout_count

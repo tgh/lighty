@@ -8,6 +8,7 @@
 #include <linux/module.h>
 #include <linux/uaccess.h>      /* for copy_to_user() and copy_from_user() */
 #include <linux/proc_fs.h>      /* for use of the /proc file system */
+#include <linux/smp_lock.h>     /* for kern_un/lock() */
 /*
  * The usb header file is needed for any usb driver, obviously.  The usb.h file
  * itself inludes the following:

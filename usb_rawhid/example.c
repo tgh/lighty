@@ -61,9 +61,9 @@ int main(void)
 		// if received data, do something with it
 		r = usb_rawhid_recv(buffer, 0);
 		if (r > 0) {
-// PD7 --> Red 1
+// PD4 --> Red 1
 // PD6 --> Green 1
-// PD4 --> Blue 1
+// PD7 --> Blue 1
 			switch(buffer[0]){
 				case 'a':
 					DDRD |= (1<<PD4);

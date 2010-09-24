@@ -28,23 +28,9 @@ int main () {
     int color = 0;
 
     //open the device
-    lighty_device = open("/dev/lighty0", O_RDWR);
+    lighty_device = open("/dev/misc/lighty0", O_RDWR);
     if (lighty_device < 0)
         perror("open");
-#if 0
-	ioctl(lighty_device, LIGHTY_IOCTL_1RED);
-	sleep(1);
-	ioctl(lighty_device, LIGHTY_IOCTL_1BLUE);
-	sleep(1);
-	ioctl(lighty_device, LIGHTY_IOCTL_1GREEN);
-	sleep(1);
-	ioctl(lighty_device, LIGHTY_IOCTL_2RED);
-	sleep(1);
-	ioctl(lighty_device, LIGHTY_IOCTL_2BLUE);
-	sleep(1);
-	ioctl(lighty_device, LIGHTY_IOCTL_2GREEN);
-    //keep outputting prompts as long as user doensn't type "q"
-#endif
     while (1) {
         outputPrompt();
         //get user input
